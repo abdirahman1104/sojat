@@ -1,64 +1,45 @@
-export default function TermsOfService() {
+export default function TermsPage() {
   return (
-    <div className="container max-w-3xl py-10">
-      <h1 className="text-3xl font-bold mb-8">Terms of Service</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="mb-6 text-3xl font-bold">Terms of Service</h1>
       
-      <div className="prose dark:prose-invert">
+      <div className="prose dark:prose-invert max-w-none">
         <h2>1. Acceptance of Terms</h2>
         <p>
-          By accessing and using Sojat, you accept and agree to be bound by the terms
-          and conditions of this agreement.
+          By accessing and using Sojat AI (&ldquo;the Service&rdquo;), you agree
+          to be bound by these Terms of Service.
         </p>
 
-        <h2>2. Description of Service</h2>
+        <h2>2. Use of Service</h2>
         <p>
-          Sojat provides an AI-powered chat platform that supports multiple languages,
-          with a focus on Somali language support. The service includes:
+          You agree to use the Service only for lawful purposes and in accordance
+          with these Terms.
         </p>
-        <ul>
-          <li>Multilingual chat capabilities</li>
-          <li>AI-powered responses</li>
-          <li>Language translation features</li>
-        </ul>
 
-        <h2>3. User Responsibilities</h2>
+        <h2>3. Privacy</h2>
         <p>
-          You agree to:
+          Your use of the Service is also governed by our Privacy Policy.
         </p>
-        <ul>
-          <li>Provide accurate information when using our services</li>
-          <li>Use the service in compliance with applicable laws</li>
-          <li>Maintain the security of your account</li>
-          <li>Not misuse or abuse our AI systems</li>
-        </ul>
 
-        <h2>4. Intellectual Property</h2>
+        <h2>4. User Content</h2>
         <p>
-          All content and materials available on Sojat, including but not limited to
-          text, graphics, website name, code, images, and logos are the intellectual
-          property of Sojat.
+          You retain ownership of any content you submit through the Service.
         </p>
 
-        <h2>5. Limitation of Liability</h2>
+        <h2>5. Service Modifications</h2>
         <p>
-          Sojat is provided "as is" without any warranties. We are not responsible
-          for any indirect, incidental, or consequential damages.
+          We reserve the right to modify or discontinue the Service at any time.
         </p>
 
-        <h2>6. Changes to Terms</h2>
+        <h2>6. Limitation of Liability</h2>
         <p>
-          We reserve the right to modify these terms at any time. We will notify
-          users of any material changes.
+          The Service is provided &ldquo;as is&rdquo; without warranties of any kind.
         </p>
 
-        <h2>7. Contact Information</h2>
+        <h2>7. Changes to Terms</h2>
         <p>
-          For any questions regarding these terms, please contact us at:
-          support@sojat.ai
-        </p>
-
-        <p className="text-sm text-muted-foreground mt-8">
-          Last updated: February 20, 2025
+          We may update these terms from time to time. Continued use of the Service
+          constitutes acceptance of any changes.
         </p>
       </div>
     </div>

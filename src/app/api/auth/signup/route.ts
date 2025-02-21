@@ -8,14 +8,14 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.id || !session?.user?.email) {
-      return NextResponse.json({ error: 'No session or email found' }, { status: 401 })
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
     const body = await req.json()
-    const { username, email } = body
+    const { username } = body
 
-    if (!username || !email) {
-      return NextResponse.json({ error: 'Missing username or email' }, { status: 400 })
+    if (!username) {
+      return NextResponse.json({ error: 'Username is required' }, { status: 400 })
     }
 
     // Check if username already exists
@@ -34,8 +34,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Username already taken' }, { status: 400 })
     }
 
-    // Insert new user using Google ID
-    const { data: newUser, error: insertError } = await supabaseAdmin
+    // Insert new user
+    const { error: insertError } = await supabaseAdmin
       .from('users')
       .insert({
         id: session.user.id,
@@ -46,21 +46,15 @@ export async function POST(req: Request) {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       })
-      .select()
-      .single()
 
     if (insertError) {
       console.error('Error creating user:', insertError)
-      return NextResponse.json({ error: insertError.message }, { status: 500 })
+      return NextResponse.json({ error: 'Error creating user' }, { status: 500 })
     }
 
-    return NextResponse.json({
-      message: 'Profile completed successfully',
-      user: newUser
-    })
-
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Signup error:', error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

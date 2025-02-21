@@ -1,14 +1,15 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
-import { cn } from '@/lib/utils'
-import { useChatStore } from '@/store/chat'
+import { Message } from '@/types'
 import { ChatMessage } from './chat-message'
 
 interface ChatMessagesProps {
-  className?: string
+  messages: Message[]
+  isLoading?: boolean
 }
 
-export function ChatMessages({ className }: ChatMessagesProps) {
-  const { messages, isLoading, streamingId } = useChatStore()
+export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -21,47 +22,29 @@ export function ChatMessages({ className }: ChatMessagesProps) {
 
   if (!messages.length) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-muted-foreground">No messages yet. Start a conversation!</p>
+      <div className="flex h-full items-center justify-center">
+        <p className="text-gray-500 dark:text-gray-400">
+          No messages yet. Start a conversation!
+        </p>
       </div>
     )
   }
 
   return (
-    <div className={cn('flex-1 overflow-y-auto', className)}>
-      <div className="container max-w-4xl py-4 space-y-4">
-        {messages.map((message) => (
-          <ChatMessage 
-            key={message.id} 
-            message={message} 
-          />
-        ))}
-        {isLoading && (
-          <div className="animate-pulse">
-            <ChatMessage
-              message={{
-                id: 'loading',
-                role: 'assistant',
-                content: 'Thinking...',
-                createdAt: new Date().toISOString(),
-              }}
-            />
-          </div>
-        )}
-        {streamingId && (
-          <div className="animate-pulse opacity-70">
-            <ChatMessage
-              message={{
-                id: streamingId,
-                role: 'assistant',
-                content: '...',
-                createdAt: new Date().toISOString(),
-              }}
-            />
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
+    <div className="space-y-4 px-4 py-6">
+      {messages.map((message, index) => (
+        <ChatMessage
+          key={index}
+          message={message}
+          isLast={index === messages.length - 1}
+        />
+      ))}
+      {isLoading && (
+        <div className="flex items-center justify-center py-4">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-gray-500 border-t-transparent" />
+        </div>
+      )}
+      <div ref={messagesEndRef} />
     </div>
   )
 }

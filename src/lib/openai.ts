@@ -1,37 +1,53 @@
 import OpenAI from 'openai'
-import { serverConfig } from '@/config/api'
+import { ApiResponse } from '@/config/api'
 
-if (!serverConfig) {
-  throw new Error('Server configuration is not available. Make sure environment variables are set.')
-}
-
-// Create OpenAI client instance
-export const openai = new OpenAI({
-  apiKey: serverConfig.openaiApiKey,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 })
 
-// Helper function to get system prompt based on language
-export function getSystemPrompt(language: string) {
-  const languagePrompt = language === 'so' 
-    ? 'Waxaad ku jawaabaysaa Af-Soomaali. Fadlan isticmaal luuqad fudud oo la fahmi karo.'
-    : 'You will respond in English. Please use simple and clear language.'
-
-  return `You are a helpful AI assistant. ${languagePrompt}
-- Be concise and clear in your responses
-- If you don't know something, say so
-- Avoid harmful or inappropriate content
-- Format responses appropriately using markdown`
+export interface ChatMessage {
+  role: 'user' | 'assistant' | 'system'
+  content: string
 }
 
-// Helper function to validate and prepare messages
-export function prepareMessages(messages: any[], language: string) {
-  // Add system message at the start if not present
-  if (messages[0]?.role !== 'system') {
-    messages.unshift({
-      role: 'system',
-      content: getSystemPrompt(language),
-    })
+export interface ChatResponse {
+  content: string
+  model: string
+  usage?: {
+    promptTokens: number
+    completionTokens: number
+    totalTokens: number
   }
+}
 
-  return messages
+export async function chatCompletion(
+  messages: ChatMessage[],
+  model: string
+): Promise<ApiResponse<ChatResponse>> {
+  try {
+    const completion = await openai.chat.completions.create({
+      model,
+      messages,
+      temperature: 0.7,
+      max_tokens: 1000,
+      stream: false
+    })
+
+    return {
+      data: {
+        content: completion.choices[0]?.message?.content || '',
+        model: completion.model,
+        usage: completion.usage ? {
+          promptTokens: completion.usage.prompt_tokens,
+          completionTokens: completion.usage.completion_tokens,
+          totalTokens: completion.usage.total_tokens
+        } : undefined
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      return { error: { message: error.message } }
+    }
+    return { error: { message: 'An unknown error occurred' } }
+  }
 }

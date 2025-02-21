@@ -1,4 +1,5 @@
 import { Message } from '@/types/chat'
+import { ChatCompletionRequestMessage } from 'openai'
 
 export async function streamChat(messages: Message[], model: string, language: string) {
   try {
@@ -8,7 +9,7 @@ export async function streamChat(messages: Message[], model: string, language: s
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        messages: messages.map(({ id, content, role }) => ({
+        messages: messages.map(({ content, role }) => ({
           content,
           role,
         })),
@@ -58,5 +59,20 @@ export async function streamChat(messages: Message[], model: string, language: s
   } catch (error) {
     console.error('Error in streamChat:', error)
     throw error
+  }
+}
+
+export function formatMessages(messages: Message[]): ChatCompletionRequestMessage[] {
+  return messages.map(message => ({
+    role: message.role,
+    content: message.content
+  }))
+}
+
+export function createMessage(content: string, role: Message['role']): Message {
+  return {
+    role,
+    content,
+    createdAt: new Date().toISOString()
   }
 }

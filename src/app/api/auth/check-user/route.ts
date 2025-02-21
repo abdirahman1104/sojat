@@ -28,38 +28,3 @@ export async function GET() {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
-
-export async function POST(req: Request) {
-  try {
-    const { userId } = await req.json()
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      )
-    }
-
-    const { data: user, error } = await supabaseAdmin
-      .from('users')
-      .select('id')
-      .eq('id', userId)
-      .single()
-
-    if (error) {
-      console.error('Error checking user:', error)
-      return NextResponse.json(
-        { error: 'Failed to check user status' },
-        { status: 500 }
-      )
-    }
-
-    return NextResponse.json({ exists: !!user })
-  } catch (err) {
-    console.error('Error in check-user route:', err)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}

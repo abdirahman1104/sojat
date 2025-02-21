@@ -29,25 +29,25 @@ export function ChatMessage({ message }: ChatMessageProps) {
           <ReactMarkdown
             remarkPlugins={[remarkGfm, remarkBreaks]}
             components={{
-              h1: ({ node, ...props }) => (
+              h1: (props) => (
                 <h1 className="text-2xl font-bold mb-4" {...props} />
               ),
-              h2: ({ node, ...props }) => (
+              h2: (props) => (
                 <h2 className="text-xl font-semibold mb-3" {...props} />
               ),
-              h3: ({ node, ...props }) => (
+              h3: (props) => (
                 <h3 className="text-lg font-medium mb-2" {...props} />
               ),
-              p: ({ node, ...props }) => (
+              p: (props) => (
                 <p className="mb-4" {...props} />
               ),
-              ul: ({ node, ...props }) => (
+              ul: (props) => (
                 <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />
               ),
-              li: ({ node, ...props }) => (
+              li: (props) => (
                 <li className="mb-1" {...props} />
               ),
-              hr: ({ node, ...props }) => (
+              hr: (props) => (
                 <hr className="my-4 border-t border-border" {...props} />
               ),
             }}

@@ -1,54 +1,26 @@
-import { NextRequest } from 'next/server'
-import { apiConfig, Message } from '@/config/api'
-import { createChatCompletion } from '@/lib/palm'
+import { NextResponse } from 'next/server'
+import { getSession } from '@/lib/auth'
+import { ChatCompletionRequestMessage } from 'openai'
+import { palmChat } from '@/lib/palm'
 
-export const runtime = 'edge'
-export const dynamic = 'force-dynamic'
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { messages, languageId = apiConfig.defaultLanguage.id } = await req.json()
-    
-    // Debug logging
-    console.log('Received request:', {
-      languageId,
-      messageCount: messages?.length
-    })
-
-    if (!messages || !Array.isArray(messages)) {
-      return new Response(
-        JSON.stringify({
-          error: {
-            message: 'Messages are required and must be an array',
-          },
-        }),
-        {
-          status: 400,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+    const session = await getSession()
+    if (!session?.user) {
+      return new NextResponse('Unauthorized', { status: 401 })
     }
 
-    // Get chat completion from PaLM
-    const response = await createChatCompletion(messages, languageId)
-    return response
+    const { messages } = await req.json()
+    
+    if (!messages || !Array.isArray(messages)) {
+      return new NextResponse('Invalid request', { status: 400 })
+    }
 
-  } catch (error: any) {
-    console.error('Chat API Error:', error)
-    return new Response(
-      JSON.stringify({
-        error: {
-          message: error.message || 'An unexpected error occurred',
-        },
-      }),
-      {
-        status: 500,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    )
+    const response = await palmChat(messages as ChatCompletionRequestMessage[])
+    
+    return NextResponse.json(response)
+  } catch (error) {
+    console.error('[CHAT_ERROR]', error)
+    return new NextResponse('Internal error', { status: 500 })
   }
 }
