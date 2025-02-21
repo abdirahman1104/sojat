@@ -14,6 +14,9 @@ export const authOptions: NextAuthOptions = {
     signIn: '/',
     error: '/error',
   },
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
     async signIn({ user }) {
       if (!user.email) {
@@ -49,4 +52,5 @@ export const authOptions: NextAuthOptions = {
 }
 
 const handler = NextAuth(authOptions)
+
 export { handler as GET, handler as POST }
